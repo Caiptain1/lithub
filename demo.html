@@ -1,1 +1,817 @@
-Hello world!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LitHub - International Lithuanian Youth Network</title>
+    <style>
+        :root {
+            --primary-green: #008f4c;
+            --primary-teal: #3b9e99;
+            --light-bg: #f4f7f6;
+            --dark-text: #333;
+            --border-color: #ddd;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--dark-text);
+            background-color: var(--light-bg);
+        }
+
+        header {
+            background: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: var(--primary-teal);
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #666;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--dark-text);
+            margin-left: 30px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary-teal);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-teal) 100%);
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: var(--primary-green);
+        }
+
+        /* Modern Multi-Select Styling */
+        .filter-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+            gap: 20px;
+            font-size: 16px;
+        }
+
+        .multi-select-container {
+            position: relative;
+            width: 350px;
+            font-family: inherit;
+        }
+
+        .multi-select-header {
+            background: white;
+            border: 2px solid var(--primary-teal);
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            color: var(--primary-teal);
+            box-shadow: 0 4px 6px rgba(59, 158, 153, 0.1);
+            user-select: none;
+            transition: all 0.2s;
+        }
+
+        .multi-select-header:hover {
+            background: #f0faf9;
+        }
+
+        .multi-select-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-height: 350px;
+            overflow-y: auto;
+            z-index: 20;
+            display: none;
+            padding: 10px;
+            box-sizing: border-box;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .multi-select-dropdown.show {
+            display: grid;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background 0.2s;
+            font-size: 14px;
+        }
+
+        .checkbox-label:hover {
+            background: var(--light-bg);
+        }
+
+        .checkbox-label input {
+            margin-right: 10px;
+            accent-color: var(--primary-teal);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        /* Map Section */
+        .map-wrapper {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 60px;
+            align-items: flex-start;
+        }
+
+        .map-visual {
+            flex: 2;
+            background: #e9ecef;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            aspect-ratio: 1.6 / 1; 
+            overflow: hidden;
+        }
+
+        .map-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: fill; 
+            display: block;
+        }
+
+        .pins-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+        }
+
+        .map-pin {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: var(--primary-teal);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 0 4px rgba(59, 158, 153, 0.3);
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+            pointer-events: auto; 
+        }
+
+        .map-pin:hover {
+            background: var(--primary-green);
+            box-shadow: 0 0 0 8px rgba(0, 143, 76, 0.3);
+            z-index: 10;
+        }
+        
+        .map-pin.active {
+            background: var(--primary-green);
+            box-shadow: 0 0 0 8px rgba(0, 143, 76, 0.5);
+            transform: translate(-50%, -50%) scale(1.5);
+            z-index: 15;
+        }
+
+        .map-pin::after {
+            content: attr(data-label);
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #222;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 16;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .map-pin:hover::after, .map-pin.active::after {
+            opacity: 1;
+        }
+
+        .org-details {
+            flex: 1;
+            padding: 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            overflow-y: auto;
+            max-height: 500px;
+        }
+
+        .org-card {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+        }
+        
+        .org-card:hover {
+            background: #f0faf9;
+            transform: translateX(5px);
+            border: 1px solid #e0f2f0;
+        }
+
+        .org-card:last-child {
+            border-bottom: 1px solid transparent;
+            margin-bottom: 0;
+        }
+
+        /* Calendar Section */
+        .calendar-wrapper {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 60px;
+        }
+
+        .calendar-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .day-name {
+            text-align: center;
+            font-weight: bold;
+            color: #666;
+            padding: 10px 0;
+        }
+
+        .calendar-day {
+            min-height: 100px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 10px;
+            background: #fafafa;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calendar-day.has-event {
+            background: #e6f7f6;
+            border-color: var(--primary-teal);
+        }
+
+        .date-number {
+            font-weight: bold;
+            color: #888;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .event-badge {
+            background: var(--primary-teal);
+            color: white;
+            font-size: 11px;
+            padding: 4px 6px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            display: block;
+            white-space: normal;
+            word-wrap: break-word;
+            line-height: 1.2;
+            transition: background 0.2s;
+        }
+
+        .event-badge:hover {
+            background: var(--primary-green);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--primary-green);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-small {
+            padding: 5px 15px;
+            font-size: 14px;
+        }
+
+        footer {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .partners {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            opacity: 0.7;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px; 
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none; 
+            border: none;
+            color: #888;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--dark-text);
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <div class="logo">Lit<span>Hub</span></div>
+            <div class="subtitle">International Lithuanian Youth Network</div>
+        </div>
+        <nav>
+            <a href="#map">Community Map</a>
+            <a href="#calendar">Events Calendar</a>
+            <a href="#join" class="btn">Register Organization</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1>Global Connections, Centralized.</h1>
+        <p>Discover Lithuanian youth organizations by city, explore global events, and build a unified network.</p>
+    </div>
+
+    <div class="container">
+        
+        <div class="filter-wrapper">
+            <strong>Filter by Countries:</strong>
+            <div class="multi-select-container">
+                <div class="multi-select-header" onclick="toggleMultiSelect(event)">
+                    <span id="select-text">All Countries Selected</span>
+                    <span style="font-size: 12px;">▼</span>
+                </div>
+                <div class="multi-select-dropdown" id="country-dropdown">
+                    <!-- Checkboxes injected via JS -->
+                </div>
+            </div>
+            <button class="btn btn-small" onclick="selectAll(true)" style="background: var(--primary-teal);">Select All</button>
+            <button class="btn btn-small" onclick="selectAll(false)" style="background: #888;">Clear All</button>
+        </div>
+
+        <h2 class="section-title" id="map">Organizations Map</h2>
+        <div class="map-wrapper">
+            <div class="map-visual" onclick="resetMapSelection()">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" alt="World Map">
+                <div class="pins-container" id="pins-container">
+                    <!-- Pins are injected via JS -->
+                </div>
+            </div>
+            <div class="org-details" id="org-list">
+                <!-- Org list injected via JS -->
+            </div>
+        </div>
+
+        <h2 class="section-title" id="calendar">Global Events Calendar</h2>
+        <div class="calendar-wrapper">
+            <div class="calendar-header">
+                <div class="calendar-controls">
+                    <button class="btn btn-small" onclick="changeMonth(-1)">&larr; Prev</button>
+                    <h3 id="current-month-display" style="margin: 0; min-width: 150px; text-align: center;">August 2026</h3>
+                    <button class="btn btn-small" onclick="changeMonth(1)">Next &rarr;</button>
+                </div>
+                <span style="color: #666; font-size: 14px;">Events filtered by selected countries</span>
+            </div>
+            <div class="calendar-grid" id="calendar-grid">
+                <div class="day-name">Sun</div><div class="day-name">Mon</div><div class="day-name">Tue</div>
+                <div class="day-name">Wed</div><div class="day-name">Thu</div><div class="day-name">Fri</div><div class="day-name">Sat</div>
+                <!-- Calendar days injected via JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <h2>Let's invest in Lithuania's future!</h2>
+        <p>Join us in building the global Lithuanian youth network.</p>
+        <p>Contact us: <strong>lithub@pljs.org</strong></p>
+        
+        <div style="margin-top: 40px; border-top: 1px solid #444; padding-top: 20px;">
+            <p style="color: #888; font-size: 14px;">Supported by our partners & resources:</p>
+            <div class="partners">
+                <span>PLJS</span>
+                <span>Google</span>
+                <span>Tesonet</span>
+                <span>Hostinger</span>
+                <span>Microsoft</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Event Details Modal -->
+    <div class="modal-overlay" id="event-modal">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <h2 id="modal-title" style="color: var(--primary-green); margin-top:0;"></h2>
+            
+            <div class="modal-meta">
+                <div><strong>📅 Date:</strong> <br><span id="modal-date"></span></div>
+                <div><strong>📍 Host / Location:</strong> <br><span id="modal-org"></span></div>
+            </div>
+            
+            <p id="modal-desc" style="line-height: 1.6; color: var(--dark-text);"></p>
+            
+            <button class="btn" style="width: 100%; margin-top: 15px; text-align: center;" onclick="closeModal()">Close Details</button>
+        </div>
+    </div>
+
+    <script>
+        let displayDate = new Date(2026, 6, 1); 
+
+        // Data Structure now includes ULSK bendruomenė
+        const organizations = [
+            { id: 1, name: "Australijos lietuvių jaunimo sąjunga", country: "Australija", city: "Sydney", coords: {top: '82%', left: '88%'}, contact: "president.aljs@outlook.com" },
+            { id: 2, name: "Lithuanian Youth Society in Denmark", country: "Danija", city: "Copenhagen", coords: {top: '24%', left: '51%'}, contact: "info@lys.lt" },
+            { id: 3, name: "Ispanijos lietuvių jaunimo sąjunga", country: "Ispanija", city: "Madrid", coords: {top: '38%', left: '46%'}, contact: "ispanija@pljs.org" },
+            { id: 4, name: "Kanados lietuvių jaunimo sąjunga", country: "Kanada", city: "Toronto", coords: {top: '30%', left: '25%'}, contact: "kanadosljs@gmail.com" },
+            { id: 5, name: "Norvegijos lietuvių jaunimo sąjunga", country: "Norvegija", city: "Oslo", coords: {top: '18%', left: '50%'}, contact: "info@nljs.no" },
+            { id: 6, name: "Vokietijos lietuvių jaunimo sąjunga", country: "Vokietija", city: "Berlin", coords: {top: '28%', left: '52%'}, contact: "vljs.admin@gmail.com" },
+            { id: 7, name: "Argentinos lietuvių jaunimo sąjunga", country: "Argentina", city: "Buenos Aires", coords: {top: '82%', left: '32%'}, contact: "argjaunimosajunga@gmail.com" },
+            { id: 8, name: "Italijos lietuvių jaunimo sąjunga", country: "Italija", city: "Rome", coords: {top: '36%', left: '53%'}, contact: "itly.rm@gmail.com" },
+            { id: 9, name: "Latvijos lietuvių jaunimo bendruomenė", country: "Latvija", city: "Riga", coords: {top: '23%', left: '55%'}, contact: "N/A" },
+            { id: 10, name: "NLT jaunimo sąjunga", country: "Nyderlandai", city: "Amsterdam", coords: {top: '28%', left: '50%'}, contact: "nltstudentai@gmail.com" },
+            { id: 11, name: "Venesuelos lietuvių jaunimo bendruomenė", country: "Venesuela", city: "Caracas", coords: {top: '55%', left: '30%'}, contact: "venesuelos.jaunimas@gmail.com" },
+            { id: 12, name: "Rusijos lietuvių jaunimo sąjunga", country: "Rusija", city: "Moscow", coords: {top: '22%', left: '63%'}, contact: "maskvos.lt@gmail.com" },
+            { id: 13, name: "Belgijos lietuvių jaunimo sąjunga", country: "Belgija", city: "Brussels", coords: {top: '29%', left: '50%'}, contact: "belgijosltjaunimoorg@gmail.com" },
+            { id: 14, name: "Islandijos lietuvių jaunimo sąjunga", country: "Islandija", city: "Reykjavik", coords: {top: '15%', left: '42%'}, contact: "islandijosjaunimas@gmail.com" },
+            { id: 15, name: "Jungtinės Karalystės lietuvių jaunimo sąjunga", country: "Jungtinė Karalystė", city: "London", coords: {top: '27%', left: '47%'}, contact: "valdyba@jkljs.org" },
+            { id: 16, name: "Lenkijos lietuvių jaunimo sąjunga", country: "Lenkija", city: "Warsaw", coords: {top: '27%', left: '54%'}, contact: "lljsajunga@gmail.com" },
+            { id: 17, name: "Lietuvių jaunimo bendruomenė Švedijoje", country: "Švedija", city: "Stockholm", coords: {top: '18%', left: '53%'}, contact: "info@jaunimas.se" },
+            { id: 18, name: "JAV lietuvių jaunimo sąjunga", country: "JAV", city: "Chicago", coords: {top: '35%', left: '23%'}, contact: "javljsvaldyba@gmail.com" },
+            { id: 19, name: "Urugvajaus lietuvių jaunimo sąjunga", country: "Urugvajus", city: "Montevideo", coords: {top: '80%', left: '34%'}, contact: "N/A" },
+            { id: 20, name: "Prancūzijos lietuvių jaunimo sąjunga", country: "Prancūzija", city: "Paris", coords: {top: '32%', left: '48%'}, contact: "prancuzija@pljs.org" },
+            { id: 21, name: "Šveicarijos lietuvių jaunimo bendruomenė", country: "Šveicarija", city: "Zurich", coords: {top: '32%', left: '51%'}, contact: "N/A" },
+            { id: 22, name: "Ukrainos lietuvių jaunimo sąjunga", country: "Ukraina", city: "Kyiv", coords: {top: '29%', left: '58%'}, contact: "tgunina@yahoo.com" },
+            { id: 23, name: "Baltarusijos lietuvių jaunimo sąjunga", country: "Baltarusija", city: "Minsk", coords: {top: '26%', left: '57%'}, contact: "martulia@bk.ru" },
+            { id: 24, name: "Austrijos lietuvių bendruomenė", country: "Austrija", city: "Vienna", coords: {top: '31%', left: '53%'}, contact: "austrijos.lietuviai@gmail.com" },
+            { id: 25, name: "Brazilijos lietuvių bendruomenė", country: "Brazilija", city: "Sao Paulo", coords: {top: '67%', left: '36%'}, contact: "contato@comunidadelituana.com.br" },
+            { id: 26, name: "Graikijos lietuvių bendruomenė", country: "Graikija", city: "Athens", coords: {top: '41%', left: '56%'}, contact: "lietuviu.bendruomene.graikijoje@gmail.com" },
+            { id: 27, name: "Turkijos lietuvių bendruomenė", country: "Turkija", city: "Istanbul", coords: {top: '39%', left: '59%'}, contact: "giedre@turkijoslietuviai.lt" },
+            { id: 28, name: "Airijos lietuvių bendruomenė", country: "Airija", city: "Dublin", coords: {top: '26%', left: '45%'}, contact: "info@alb.ie" },
+            { id: 29, name: "Čilės lietuvių bendruomenė", country: "Čilė", city: "Santiago", coords: {top: '78%', left: '29%'}, contact: "comunidadlituanadechile@gmail.com" },
+            { id: 30, name: "Suomijos lietuvių bendruomenė", country: "Suomija", city: "Helsinki", coords: {top: '18%', left: '56%'}, contact: "info@lietuviai.fi" },
+            { id: 31, name: "Vengrijos lietuvių bendruomenė", country: "Vengrija", city: "Budapest", coords: {top: '32%', left: '55%'}, contact: "litvania@gmail.com" },
+            { id: 32, name: "Pasaulio Lietuvių Jaunimo Sąjunga", country: "Lietuva", city: "Vilnius", coords: {top: '25%', left: '55%'}, contact: "lithub@pljs.org" },
+            { id: 33, name: "ULSK bendruomenė - Uzsienio Lietuviu Studentu Klubas", country: "Lietuva", city: "Vilnius", coords: {top: '26%', left: '55.5%'}, contact: "N/A" }
+        ];
+
+        const allCountries = [...new Set(organizations.map(org => org.country))].sort();
+
+        // Extended Event Data
+        const events = [
+            { id: 1, date: "2026-07-15", title: "Global Youth Kickoff", orgId: 15, country: "Jungtinė Karalystė", time: "18:00 Local Time", desc: "Join us in London for the official kickoff of the 2026/2027 season. Network with young professionals, students, and community leaders." },
+            { id: 2, date: "2026-07-28", title: "Prancūzijos LJS Networking", orgId: 20, country: "Prancūzija", time: "19:00 Local Time", desc: "An evening of fine wine and great conversations at the Lithuanian Embassy in Paris. Open to all Lithuanian youth in France." },
+            { id: 3, date: "2026-08-05", title: "Vasaros Stovykla", orgId: 15, country: "Jungtinė Karalystė", time: "All Day", desc: "Annual summer camp featuring team-building activities, Lithuanian heritage workshops, and outdoor fun." },
+            { id: 4, date: "2026-08-15", title: "Šiaurės Amerikos Regioninis Suvažiavimas", orgId: 18, country: "JAV", time: "09:00 - 17:00", desc: "North American Regional Summit gathering Lithuanian youth leaders from the US and Canada to discuss diaspora challenges and opportunities." },
+            { id: 5, date: "2026-08-28", title: "Europos Jaunimo Dirbtuvės", orgId: 6, country: "Vokietija", time: "10:00 - 15:00", desc: "Interactive workshops in Berlin focusing on leadership, digital skills, and community building." },
+            { id: 6, date: "2026-09-10", title: "Australijos LJS Metinis Susitikimas", orgId: 1, country: "Australija", time: "14:00 Local Time", desc: "Annual general meeting for ALJS members to elect the new board and plan upcoming events." },
+            
+            // Suva Event
+            { id: 7, date: "2026-12-15", title: "Suva - Day 1", orgId: 32, country: "Lietuva", time: "All Day", desc: "Arrival and opening ceremony of the World Lithuanian Youth Summit (SUVA). Strategic planning sessions begin." },
+            { id: 8, date: "2026-12-16", title: "Suva - Day 2", orgId: 32, country: "Lietuva", time: "All Day", desc: "Leadership training and workshops for global organization leaders." },
+            { id: 9, date: "2026-12-17", title: "Suva - Day 3", orgId: 32, country: "Lietuva", time: "All Day", desc: "Networking events and round-table discussions with government representatives." },
+            { id: 10, date: "2026-12-18", title: "Suva - Day 4", orgId: 32, country: "Lietuva", time: "All Day", desc: "Project pitches and collaborative planning for the upcoming Congress." },
+            { id: 11, date: "2026-12-19", title: "Suva - Day 5", orgId: 32, country: "Lietuva", time: "All Day", desc: "Final resolutions, action plans, and the official closing gala." },
+            { id: 12, date: "2026-12-20", title: "Suva - Departures", orgId: 32, country: "Lietuva", time: "Morning", desc: "Delegates depart. Safe travels!" },
+
+            // XIXth World Lithuanian Youth Congress
+            { id: 13, date: "2027-12-01", title: "XIXth World Lithuanian Youth Congress", orgId: 32, country: "Lietuva", time: "Opening at 17:00", desc: "The premier global gathering of Lithuanian diaspora youth. Featuring keynote speakers, panel discussions, cultural events, and the election of the new PLJS board." },
+            { id: 14, date: "2027-12-02", title: "XIXth World Lithuanian Youth Congress", orgId: 32, country: "Lietuva", time: "All Day", desc: "The premier global gathering of Lithuanian diaspora youth. Day 2: Panels and Workshops." },
+            { id: 15, date: "2027-12-03", title: "XIXth World Lithuanian Youth Congress", orgId: 32, country: "Lietuva", time: "All Day", desc: "The premier global gathering of Lithuanian diaspora youth. Day 3: Elections and Debates." },
+            { id: 16, date: "2027-12-04", title: "XIXth World Lithuanian Youth Congress", orgId: 32, country: "Lietuva", time: "All Day", desc: "The premier global gathering of Lithuanian diaspora youth. Day 4: Resolutions and Voting." },
+            { id: 17, date: "2027-12-05", title: "XIXth World Lithuanian Youth Congress", orgId: 32, country: "Lietuva", time: "All Day", desc: "The premier global gathering of Lithuanian diaspora youth. Day 5: Closing Ceremony and Gala." }
+        ];
+
+        function populateDropdown() {
+            const dropdown = document.getElementById('country-dropdown');
+            dropdown.innerHTML = '';
+            
+            allCountries.forEach(country => {
+                const label = document.createElement('label');
+                label.className = 'checkbox-label';
+                label.innerHTML = `
+                    <input type="checkbox" value="${country}" checked onchange="applyFilters()">
+                    ${country}
+                `;
+                dropdown.appendChild(label);
+            });
+        }
+
+        function toggleMultiSelect(e) {
+            e.stopPropagation();
+            document.getElementById('country-dropdown').classList.toggle('show');
+        }
+
+        function selectAll(state) {
+            const checkboxes = document.querySelectorAll('.multi-select-dropdown input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = state);
+            applyFilters();
+        }
+
+        // Global click handler to close dropdowns and reset pins
+        document.addEventListener('click', function(event) {
+            // Dropdown logic
+            if (!event.target.closest('.multi-select-container')) {
+                document.getElementById('country-dropdown').classList.remove('show');
+            }
+
+            // Map pin reset logic
+            if (!event.target.closest('.map-pin') && !event.target.closest('.org-card') && !event.target.closest('.filter-wrapper')) {
+                resetMapSelection();
+            }
+        });
+
+        function changeMonth(direction) {
+            displayDate.setMonth(displayDate.getMonth() + direction);
+            applyFilters(); 
+        }
+
+        function highlightPin(orgId) {
+            document.querySelectorAll('.map-pin').forEach(pin => pin.classList.remove('active'));
+            if (orgId) {
+                const activePin = document.querySelector(`.map-pin[data-id="${orgId}"]`);
+                if (activePin) activePin.classList.add('active');
+            }
+        }
+
+        function resetMapSelection() {
+            highlightPin(null);
+            applyFilters(); // Re-renders the list based on dropdown filters instead of single selection
+        }
+
+        function renderMap(filteredOrgs) {
+            const pinsContainer = document.getElementById('pins-container');
+            pinsContainer.innerHTML = ''; 
+            
+            filteredOrgs.forEach(org => {
+                const pin = document.createElement('div');
+                pin.className = 'map-pin';
+                pin.style.top = org.coords.top;
+                pin.style.left = org.coords.left;
+                pin.setAttribute('data-id', org.id);
+                pin.setAttribute('data-country', org.country);
+                pin.setAttribute('data-label', org.name);
+                
+                pin.onclick = (e) => {
+                    e.stopPropagation(); // Prevent global click from clearing
+                    highlightPin(org.id);
+                    renderOrgList([org], `${org.city}, ${org.country}`);
+                };
+                pinsContainer.appendChild(pin);
+            });
+        }
+
+        function renderOrgList(orgs, labelName = "All Selected Locations") {
+            const orgList = document.getElementById('org-list');
+            if (orgs.length === 0) {
+                orgList.innerHTML = `<h3 style="color: #888;">No organizations found for current filter.</h3>`;
+                return;
+            }
+
+            let html = `<h3>Organizations in ${labelName}</h3>`;
+            orgs.forEach(org => {
+                html += `
+                    <div class="org-card" onclick="event.stopPropagation(); highlightPin(${org.id});">
+                        <h4 style="margin: 0 0 5px 0; color: var(--primary-green);">${org.name}</h4>
+                        <span style="font-size: 12px; color: #888; display:block; margin-bottom: 10px;">${org.city}, ${org.country}</span>
+                        <p style="margin: 0; font-size: 14px;"><strong>Contact:</strong> ${org.contact !== 'N/A' ? `<a href="mailto:${org.contact}" style="color: var(--primary-teal);">${org.contact}</a>` : 'Not specified'}</p>
+                    </div>
+                `;
+            });
+            orgList.innerHTML = html;
+        }
+
+        function renderCalendar(filteredEvents) {
+            const grid = document.getElementById('calendar-grid');
+            const monthDisplay = document.getElementById('current-month-display');
+            
+            const year = displayDate.getFullYear();
+            const month = displayDate.getMonth();
+            
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            monthDisplay.innerText = `${monthNames[month]} ${year}`;
+            
+            const days = grid.querySelectorAll('.calendar-day');
+            days.forEach(d => d.remove());
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            for(let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div class="calendar-day" style="background: transparent; border: none;"></div>`;
+            }
+
+            for(let day = 1; day <= totalDays; day++) {
+                const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                const dayEvents = filteredEvents.filter(e => e.date === dateString);
+                
+                let dayHtml = `<div class="calendar-day ${dayEvents.length > 0 ? 'has-event' : ''}">
+                                <span class="date-number">${day}</span>`;
+                
+                dayEvents.forEach(e => {
+                    dayHtml += `<div class="event-badge" title="${e.title}" onclick="openModal(${e.id})">${e.title}</div>`;
+                });
+
+                dayHtml += `</div>`;
+                grid.innerHTML += dayHtml;
+            }
+        }
+
+        // Modal Logic
+        function openModal(eventId) {
+            const ev = events.find(e => e.id === eventId);
+            if (!ev) return;
+            
+            const hostOrg = organizations.find(o => o.id === ev.orgId);
+            
+            document.getElementById('modal-title').innerText = ev.title;
+            document.getElementById('modal-date').innerText = `${ev.date} | ${ev.time}`;
+            document.getElementById('modal-org').innerText = hostOrg ? hostOrg.name : ev.country;
+            document.getElementById('modal-desc').innerText = ev.desc;
+            
+            document.getElementById('event-modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('event-modal').classList.remove('show');
+        }
+
+        function applyFilters() {
+            const checkedBoxes = document.querySelectorAll('.multi-select-dropdown input:checked');
+            const selectedCountries = Array.from(checkedBoxes).map(cb => cb.value);
+            
+            const selectText = document.getElementById('select-text');
+            if(selectedCountries.length === allCountries.length) {
+                selectText.innerText = "All Countries Selected";
+            } else if (selectedCountries.length === 0) {
+                selectText.innerText = "No Countries Selected";
+            } else {
+                selectText.innerText = `${selectedCountries.length} Countries Selected`;
+            }
+
+            const filteredOrgs = organizations.filter(o => selectedCountries.includes(o.country));
+            const filteredEvents = events.filter(e => selectedCountries.includes(e.country));
+
+            renderMap(filteredOrgs);
+            if(selectedCountries.length === 1) {
+                renderOrgList(filteredOrgs, selectedCountries[0]);
+            } else {
+                renderOrgList(filteredOrgs, selectedCountries.length === allCountries.length ? "All Locations" : "Filtered Locations");
+            }
+            renderCalendar(filteredEvents);
+        }
+
+        window.onload = () => {
+            populateDropdown();
+            applyFilters();
+        };
+    </script>
+</body>
+</html>
