@@ -150,6 +150,7 @@
             z-index: 20;
             display: none;
             padding: 10px;
+            box-sizing: border-box;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
@@ -322,7 +323,6 @@
         }
 
         .calendar-scroll-area {
-            /* Enables horizontal scrolling on mobile to prevent squished text */
             width: 100%;
             overflow-x: auto;
             padding-bottom: 10px; 
@@ -332,7 +332,7 @@
             display: grid;
             grid-template-columns: repeat(7, minmax(0, 1fr));
             gap: 10px;
-            min-width: 700px; /* Forces minimum width so badges don't break poorly */
+            min-width: 700px;
         }
 
         .day-name {
@@ -444,6 +444,8 @@
             position: relative;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             animation: modalFadeIn 0.3s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         @keyframes modalFadeIn {
@@ -477,9 +479,6 @@
             padding-bottom: 15px;
         }
 
-        /* =========================================
-           MOBILE RESPONSIVENESS 
-           ========================================= */
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -519,7 +518,7 @@
             }
 
             .multi-select-dropdown {
-                grid-template-columns: 1fr; /* 1 column dropdown on mobile */
+                grid-template-columns: 1fr; 
             }
 
             .btn-small {
@@ -533,7 +532,7 @@
 
             .map-visual {
                 width: 100%;
-                aspect-ratio: 1.4 / 1; /* Slightly less vertical stretch on mobile */
+                aspect-ratio: 1.4 / 1; 
             }
 
             .org-details {
@@ -707,6 +706,7 @@
 
         const allCountries = [...new Set(organizations.map(org => org.country))].sort();
 
+        // Extended Event Data
         const events = [
             { id: 1, date: "2026-07-15", title: "Global Youth Kickoff", orgId: 15, country: "Jungtinė Karalystė", time: "18:00 Local Time", desc: "Join us in London for the official kickoff of the 2026/2027 season. Network with young professionals, students, and community leaders." },
             { id: 2, date: "2026-07-28", title: "Prancūzijos LJS Networking", orgId: 20, country: "Prancūzija", time: "19:00 Local Time", desc: "An evening of fine wine and great conversations at the Lithuanian Embassy in Paris. Open to all Lithuanian youth in France." },
@@ -714,12 +714,29 @@
             { id: 4, date: "2026-08-15", title: "Šiaurės Amerikos Regioninis Suvažiavimas", orgId: 18, country: "JAV", time: "09:00 - 17:00", desc: "North American Regional Summit gathering Lithuanian youth leaders from the US and Canada to discuss diaspora challenges and opportunities." },
             { id: 5, date: "2026-08-28", title: "Europos Jaunimo Dirbtuvės", orgId: 6, country: "Vokietija", time: "10:00 - 15:00", desc: "Interactive workshops in Berlin focusing on leadership, digital skills, and community building." },
             { id: 6, date: "2026-09-10", title: "Australijos LJS Metinis Susitikimas", orgId: 1, country: "Australija", time: "14:00 Local Time", desc: "Annual general meeting for ALJS members to elect the new board and plan upcoming events." },
+            
+            // Suva & Leader Academies
+            { id: 18, date: "2026-07-19", title: "Lyderystės akademija", orgId: 32, country: "Lietuva", time: "08:00 - 20:00+", desc: "<strong>1 Diena: Lyderystė ir Komandos formavimas</strong><br><br>08:00 - Dalyvių susirinkimas<br>08:30 - Kelionė iš Vilniaus į Dzūkijos Dvarą<br>10:30 - Kambarių pasiskirstymas<br>11:30 - Akademijos atidarymas<br>12:30 - Grupinio projekto pristatymas ir pažindinimasis<br>14:00 - Pietūs<br>15:00 - Lyderystė bei komandos formavimas<br>19:00 - Vakarienė<br>20:00 - Vakarinė programos dalis" },
+            { id: 19, date: "2026-07-20", title: "Lyderystės akademija", orgId: 32, country: "Lietuva", time: "09:00 - 20:00+", desc: "<strong>2 Diena: Komunikaciniai įgūdžiai, projektai ir bendradarbiavimas</strong><br><br>09:00 - Pusryčiai<br>10:00 - Komunikacija, Viešasis kalbėjimas + Pitching<br>14:00 - Pietūs<br>15:00 - Projektai: A-Z, Praktika<br>17:00 - Fundraising, Bendradarbiavimas ir partnerystės<br>19:00 - Vakarienė<br>20:00 - Vakarinė programos dalis" },
+            { id: 20, date: "2026-07-21", title: "Lyderystės akademija", orgId: 32, country: "Lietuva", time: "08:30 - 20:00+", desc: "<strong>3 Diena: Globali Lietuva ir diaspora</strong><br><br>08:30 - Labas rytas<br>09:00 - Pusryčiai<br>10:00 - Lietuvos geopolitinė situacija, Globali lietuvių bendruomenė<br>14:00 - Pietūs<br>15:00 - Paskaita - lyderio darbas, Dirbtuvės + Lyderystė komandoje<br>17:00 - Darbas prie komandinių projektų<br>19:00 - Vakarienė<br>20:00 - Vakarinė programos dalis" },
+            { id: 21, date: "2026-07-22", title: "Lyderystės akademija", orgId: 32, country: "Lietuva", time: "08:30 - 17:00", desc: "<strong>4 Diena: Projektai ir Akademijos Uždarymas</strong><br><br>08:30 - Labas rytas<br>09:00 - Pusryčiai<br>10:00 - Projektų pristatymai, Feedback session<br>13:00 - Akademijos apžvalga, Padėka ir sertifikatų įteikimas<br>14:00 - Pietūs<br>15:00 - Tinklaveikla ir kraustymasis<br>16:00 - Kelionė į Vilnių" },
+            
+            { id: 22, date: "2026-07-23", title: "PLB ir PLJS lyderių suvažiavimas", orgId: 32, country: "Lietuva", time: "10:00 - 22:00", desc: "<strong>1 Diena (Plungė)</strong><br><br>10:00 - Atvykimas<br>11:00 - Lankymasis Platelių Šaltojo karo ekspozicijoje<br>14:30 - Apgyvendinimas viešbutyje „Porto“<br>15:00 - Ekskursija po Plungę<br>16:30 - Susitikimas su Čiurlioniu ir parodos atidarymas Žemaičių dailės muziejuje<br>18:00 - Plungės miesto pristatymas, mero priėmimas ir žemaitiška vakarienė Oginskio dvaro žirgyne" },
+            { id: 23, date: "2026-07-24", title: "PLB ir PLJS lyderių suvažiavimas", orgId: 32, country: "Lietuva", time: "09:00 - 22:30", desc: "<strong>2 Diena (Plungė)</strong><br><br>09:00 - Suvažiavimo atidarymas Oginskio rūmuose, įžanginiai žodžiai<br>09:40 - Įvadinis pranešimas apie lietuvybės išlikimą<br>10:45 - PLB valdybos ir PLJS strateginės gairės<br>12:00 - URM pranešimas dėl pirmininkavimo ES Tarybai<br>12:20 - Podiumo diskusijos: Lietuvos diasporos politikos gairės 2030<br>14:00 - Kaip veikia Lietuvą geopolitinė situacija<br>14:30 - Kraštų bendruomenių įsitraukimas į visuotinę gynybą<br>15:30 - Lietuvos šaulių sąjungos ir PLB sinergija<br>16:10 - PLB stiprinimas ir XVIII Seimo nutarimų įgyvendinimas<br>17:45 - Furšetas ir filmo „Mūsų olimpiada“ premjera<br>20:30 - Vakarienė restorane „Porto“" },
+            { id: 24, date: "2026-07-25", title: "PLB ir PLJS lyderių suvažiavimas", orgId: 32, country: "Lietuva", time: "09:00 - 23:00", desc: "<strong>3 Diena (Plungė/Telšiai)</strong><br><br>09:00 - Gerosios patirtys: Lietuvių bendruomenių stiprinimas ir augimas<br>10:45 - Lyderystės mokymai: savęs ir komandos pažinimas<br>13:30 - Lyderystės mokymų tęsinys<br>15:15 - Suvažiavimo aptarimas ir rekomendacijos<br>16:00 - Išvažiavimas į Telšius<br>16:30 - Įsikūrimas Telšių kunigų seminarijos svečių namuose<br>17:30 - Susitikimas su Telšių rajono savivaldybės meru<br>18:45 - Vakarienė<br>20:30 - Mero priėmimas, koncertas ir naktišokiai Telšių kultūros centre" },
+            { id: 25, date: "2026-07-26", title: "PLB ir PLJS lyderių suvažiavimas", orgId: 32, country: "Lietuva", time: "10:00 - 16:00", desc: "<strong>4 Diena (Telšiai)</strong><br><br>10:00 - Iškilmingos Mišios Telšių katedroje<br>11:30 - Ekskursija po Telšių katedrą<br>13:00 - Pietūs Telšių kunigų seminarijoje<br>14:00 - Ekskursija po Telšius" },
+
             { id: 7, date: "2026-12-15", title: "Suva - Day 1", orgId: 32, country: "Lietuva", time: "All Day", desc: "Arrival and opening ceremony of the World Lithuanian Youth Summit (SUVA). Strategic planning sessions begin." },
             { id: 8, date: "2026-12-16", title: "Suva - Day 2", orgId: 32, country: "Lietuva", time: "All Day", desc: "Leadership training and workshops for global organization leaders." },
             { id: 9, date: "2026-12-17", title: "Suva - Day 3", orgId: 32, country: "Lietuva", time: "All Day", desc: "Networking events and round-table discussions with government representatives." },
             { id: 10, date: "2026-12-18", title: "Suva - Day 4", orgId: 32, country: "Lietuva", time: "All Day", desc: "Project pitches and collaborative planning for the upcoming Congress." },
             { id: 11, date: "2026-12-19", title: "Suva - Day 5", orgId: 32, country: "Lietuva", time: "All Day", desc: "Final resolutions, action plans, and the official closing gala." },
             { id: 12, date: "2026-12-20", title: "Suva - Departures", orgId: 32, country: "Lietuva", time: "Morning", desc: "Delegates depart. Safe travels!" },
+
+            // Langinės event
+            { id: 26, date: "2026-07-18", title: "Langinės", orgId: 33, country: "Lietuva", time: "18:30 - 22:00", desc: "Lietuvoje vykstantis renginys visiems pasaulio lietuviams! Langinių organizatoriai Užsienio lietuvių studentų klubas (ULSK) ir Pasaulio lietuvių jaunimo sąjunga (PLJS) siekia visiems užsienyje gyvenantiems lietuviams ar jau grįžusiam jaunimui atverti galimybę pažinti vieniems kitus ir plėsti bendraminčių ratą. Šis renginys vyksta kartą arba kelis kartus per metus ir yra atviras visiems!" },
+
+            // XIXth World Lithuanian Youth Congress
             { id: 13, date: "2027-12-01", title: "XIXth World Lithuanian Youth Congress", orgId: 32, country: "Lietuva", time: "Opening at 17:00", desc: "The premier global gathering of Lithuanian diaspora youth. Featuring keynote speakers, panel discussions, cultural events, and the election of the new PLJS board." },
             { id: 14, date: "2027-12-02", title: "XIXth World Lithuanian Youth Congress", orgId: 32, country: "Lietuva", time: "All Day", desc: "The premier global gathering of Lithuanian diaspora youth. Day 2: Panels and Workshops." },
             { id: 15, date: "2027-12-03", title: "XIXth World Lithuanian Youth Congress", orgId: 32, country: "Lietuva", time: "All Day", desc: "The premier global gathering of Lithuanian diaspora youth. Day 3: Elections and Debates." },
@@ -871,7 +888,7 @@
             document.getElementById('modal-title').innerText = ev.title;
             document.getElementById('modal-date').innerText = `${ev.date} | ${ev.time}`;
             document.getElementById('modal-org').innerText = hostOrg ? hostOrg.name : ev.country;
-            document.getElementById('modal-desc').innerText = ev.desc;
+            document.getElementById('modal-desc').innerHTML = ev.desc;
             
             document.getElementById('event-modal').classList.add('show');
         }
